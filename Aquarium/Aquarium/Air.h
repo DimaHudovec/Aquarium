@@ -11,12 +11,14 @@
 
 #include "Button.h"
 #include "MainMenu.h"
+#include "MyRTC.h"
 #include <LiquidCrystal.h>
 
 struct AirStruct
 {
-	int currentAir; // стандартная настройка компрессора (отключено)
+	byte currentAir; // стандартная настройка компрессора (отключено)
 	String currentAirStr;
+	byte realAir;
 };
 
 extern AirStruct Air;
@@ -24,6 +26,7 @@ extern AirStruct Air;
 void setAir(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrystal &lcd);
 void printSetAir(LiquidCrystal &lcd);
 void initAir();
+void swithair();
 void changeAirStr();
 #endif
 

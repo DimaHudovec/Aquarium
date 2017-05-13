@@ -18,6 +18,8 @@ void setTemp(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrystal 
 		menuItemElement = 0;
 		delay(100);
 		//lcd.clear();
+		MemWrite(8, Temperature.currentTemp);
+		EEPROM.write(10, Temperature.currentHeater);
 		printMainMenu(lcd, menuItem);
 		break;
 		// Обработка нажатия кнопки "Вправо" (выбор изменяемого элемента справа)
@@ -46,7 +48,7 @@ void setTemp(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrystal 
 	case btnUP:
 		if (menuItemElement == 0) // установка температуры
 		{
-			if (Temperature.currentTemp < 27)
+			if (Temperature.currentTemp < 35)
 			{
 				Temperature.currentTemp++;
 			}
@@ -70,7 +72,7 @@ void setTemp(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrystal 
 	case btnDOWN:
 		if (menuItemElement == 0) // установка температуры
 		{
-			if (Temperature.currentTemp > 20)
+			if (Temperature.currentTemp > 15)
 			{
 				Temperature.currentTemp--;
 			}
@@ -103,7 +105,7 @@ void printSetTemp(LiquidCrystal &lcd, int &menuItemElement)
 	{
 		lcd.print("Temperature:  oC");
 		lcd.setCursor(12, 1);
-		lcd.print(Temperature.realTemp);
+		lcd.print(Temperature.currentTemp);
 	}
 	if (menuItemElement == 1)
 	{
@@ -128,10 +130,20 @@ void changeTempStr()
 
 void initTemp()
 {
-	Temperature.currentTemp = 23;
-	Temperature.currentHeater = 0;
-	Temperature.currentTempStr = "OFF";
-	Temperature.realTemp = 0;
+	unsigned int temp = MemRead(8);
+	if (temp == 65535)
+	{
+		Temperature.currentTemp = 23;
+		Temperature.currentHeater = 0;
+		Temperature.currentTempStr = "OFF";
+		Temperature.realTemp = 0;
+	}
+	else
+	{
+		Temperature.currentHeater = EEPROM.read(10);
+		changeTempStr();
+		Temperature.currentTemp = temp;
+	}	
 }
 
 void readTemp(OneWire &ds)

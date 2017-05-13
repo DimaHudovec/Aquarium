@@ -239,7 +239,7 @@ void setTime(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrystal 
 		if (menuItemElement == 0) // установка часов
 		{
 			MyRTC.currentHour--;
-			if (MyRTC.currentHour < 0)
+			if (MyRTC.currentHour == 255 )
 			{
 				MyRTC.currentHour = 23;
 			}
@@ -250,7 +250,7 @@ void setTime(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrystal 
 		else if (menuItemElement == 1) // установка минут
 		{
 			MyRTC.currentMinute--;
-			if (MyRTC.currentMinute < 0)
+			if (MyRTC.currentMinute == 255)
 			{
 				MyRTC.currentMinute = 59;
 			}
@@ -318,9 +318,8 @@ void setRealTime(RTC_DS1307 & RTC)
 		uint8_t(MyRTC.currentDay), uint8_t(MyRTC.currentHour), uint8_t(MyRTC.currentMinute),0));
 }
 
-void getRealTime(RTC_DS1307 & RTC)
+void getRealTime(DateTime & now)
 {
-	DateTime now = RTC.now();
 	MyRTC.currentYear = now.year();
 	MyRTC.currentMonth = now.month();
 	MyRTC.currentDay = now.day();

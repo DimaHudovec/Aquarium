@@ -6,7 +6,7 @@
 
 FeedStruct Feed;
 
-void setFeed(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrystal &lcd) // menuLevel = 2 - значит подменю главного меню
+void setFeed(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrystal &lcd, Servo &servo) // menuLevel = 2 - значит подменю главного меню
 {
 	if (menuLevel != 2 && menuItem != 5) return;
 	deb();
@@ -18,6 +18,14 @@ void setFeed(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrystal 
 		menuItemElement = 0;
 		delay(100);
 		//lcd.clear();
+		EEPROM.write(2, Feed.currentFeed);
+		EEPROM.write(3, Feed.feedHour);
+		EEPROM.write(4, Feed.feedMinute);
+		Feed.feedDay = 0;
+		Feed.deg = 5;
+		EEPROM.write(5, Feed.deg);
+		EEPROM.write(6, Feed.currentFeed);
+		servo.write(Feed.deg);
 		printMainMenu(lcd, menuItem);
 		break;
 		// Обработка нажатия кнопки "Вправо" (выбор изменяемого элемента справа)
@@ -96,7 +104,7 @@ void setFeed(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrystal 
 		if (menuItemElement == 1) // установка часов кормления
 		{
 			Feed.feedHour--;
-			if (Feed.feedHour < 0)
+			if (Feed.feedHour == 255)
 			{
 				Feed.feedHour = 23;
 			}
@@ -107,7 +115,7 @@ void setFeed(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrystal 
 		if (menuItemElement == 2) // установка минут кормления
 		{
 			Feed.feedMinute--;
-			if (Feed.feedMinute < 0)
+			if (Feed.feedMinute == 255)
 			{
 				Feed.feedMinute = 59;
 			}
@@ -166,10 +174,102 @@ void changeFeedStr()
 	}
 }
 
-void initFeed()
+void initFeed(Servo &servo)
 {
-	Feed.currentFeed = 0;
-	Feed.feedHour = 8;
-	Feed.feedMinute = 0;
-	Feed.currentFeedStr = "OFF";
+	byte mode = EEPROM.read(2);
+	if (mode == 255)
+	{
+		Feed.currentFeed = 0;
+		Feed.feedHour = 8;
+		Feed.feedMinute = 0;
+		Feed.currentFeedStr = "OFF";
+		Feed.feedDay = 0;
+		Feed.feedToday = Feed.currentFeed;
+		Feed.deg = 5;
+		servo.write(Feed.deg);
+	}
+	else
+	{
+		Feed.currentFeed = mode;
+		Feed.feedHour = EEPROM.read(3);
+		Feed.feedMinute = EEPROM.read(4);
+		changeFeedStr();
+		Feed.feedDay = 0;
+		Feed.feedToday = EEPROM.read(6);
+		if (Feed.feedToday == 255)
+			Feed.feedToday = Feed.currentFeed;
+		Feed.deg = EEPROM.read(5);
+		if (Feed.deg == 255)
+			Feed.deg = 5;
+		servo.write(Feed.deg);
+	}
+}
+
+void feeding(Servo &servo)
+{
+	switch (Feed.currentFeed)
+	{
+	case 1:
+		if (Feed.feedToday == 1)
+		{
+			Serial.println("OK");
+			switch (Feed.deg)
+			{
+			case 5:
+				Feed.deg = 60;
+				servo.write(Feed.deg);
+				EEPROM.write(5, Feed.deg);
+				break;
+			case 60:
+				Feed.deg = 120;
+				servo.write(Feed.deg);
+				EEPROM.write(5, Feed.deg);
+				break;
+			case 120: 
+				Feed.deg = 180;
+				servo.write(Feed.deg);
+				delay(2000);
+				Feed.deg = 5;
+				servo.write(Feed.deg);
+				EEPROM.write(5, Feed.deg);
+				break;
+			}
+		}
+		break;
+	case 2:
+		if (Feed.feedToday == 1)
+		{
+			Feed.feedToday = 2;
+			EEPROM.write(6, Feed.feedToday);
+			switch (Feed.deg)
+			{
+			case 5:
+				Feed.deg = 60;
+				servo.write(Feed.deg);
+				EEPROM.write(5, Feed.deg);
+				break;
+			case 60:
+				Feed.deg = 120;
+				servo.write(Feed.deg);
+				EEPROM.write(5, Feed.deg);
+				break;
+			case 120:
+				Feed.deg = 180;
+				servo.write(Feed.deg);
+				delay(2000);
+				Feed.deg = 5;
+				servo.write(Feed.deg);
+				EEPROM.write(5, Feed.deg);
+				break;
+			}
+		}
+		else if (Feed.feedToday == 2)
+		{
+			Feed.feedToday = 1;
+			EEPROM.write(6, Feed.feedToday);
+		}
+		break;
+	default:
+		break;
+	}
 }

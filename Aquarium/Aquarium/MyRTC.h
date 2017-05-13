@@ -16,12 +16,12 @@
 
 struct MyRTCStruct
 {
-	 int currentDay; // стандартная настройка даты
-	 int currentMonth;
+	 byte currentDay; // стандартная настройка даты
+	 byte currentMonth;
 	 int currentYear;
 
-	 int currentHour; // стандартная настройка времени
-	 int currentMinute;
+	 byte currentHour; // стандартная настройка времени
+	 byte currentMinute;
 
 };
 
@@ -33,7 +33,7 @@ void printSetTime(LiquidCrystal &lcd);
 void printSetDate(LiquidCrystal &lcd);
 void initMyRTC();
 void setRealTime(RTC_DS1307 &RTC);
-void getRealTime(RTC_DS1307 &RTC);
+void getRealTime(DateTime &now);
 
 #endif
 

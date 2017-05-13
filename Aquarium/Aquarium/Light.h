@@ -12,10 +12,12 @@
 #include "Button.h"
 #include "MainMenu.h"
 #include <LiquidCrystal.h>
+#include <EEPROM.h>
 
 struct LightStruct
 {
-	int currentLight; // стандартная настройка подсветки (отключено)
+	byte currentLight; // стандартная настройка подсветки (отключено)
+	byte realLight;
 	String currentLightStr;
 };
 
@@ -25,6 +27,7 @@ void setLights(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrysta
 void printSetLights(LiquidCrystal &lcd);
 void changeLightStr();
 void initLight();
+void swithlight();
 
 #endif
 

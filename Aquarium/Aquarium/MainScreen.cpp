@@ -46,7 +46,7 @@ void mainScreen(int &menuLevel, int &menuItem, LiquidCrystal &lcd) // menuLevel 
 
 void printMainScreen(LiquidCrystal &lcd)
 {
-	lcd.clear();
+	//lcd.clear();
 	lcd.setCursor(0, 0);
 	if (MyRTC.currentDay < 10)
 	{
@@ -81,9 +81,10 @@ void printMainScreen(LiquidCrystal &lcd)
 		{
 			lcd.print("0");
 		}
-		lcd.print(Temperature.realTemp);
+		lcd.print(int(Temperature.realTemp));
 		lcd.print("oC L=");
 		lcd.print(Light.currentLightStr);
+		lcd.print("    ");
 	}
 	if (MainScreen.screen == 1)
 	{
@@ -92,10 +93,12 @@ void printMainScreen(LiquidCrystal &lcd)
 		lcd.print(" ");
 		lcd.print("Heat:");
 		lcd.print(Temperature.currentTempStr);
+		lcd.print("    ");
 	}
 	if (MainScreen.screen == 2)
 	{
 		lcd.print("Feed:");
 		lcd.print(Feed.currentFeedStr);
+		lcd.print("        ");
 	}
 }

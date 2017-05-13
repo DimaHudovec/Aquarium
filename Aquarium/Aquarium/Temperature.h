@@ -13,11 +13,12 @@
 #include "MainMenu.h"
 #include <OneWire.h>
 #include <LiquidCrystal.h>
+#include "Memory.h"
 
 struct TemperatureStruct
 {
 	int currentTemp; // стандартная настройка температуры воды (отключено)
-	int currentHeater;
+	byte currentHeater;
 	int realTemp;
 	String currentTempStr;
 };

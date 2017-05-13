@@ -11,22 +11,29 @@
 
 #include "Button.h"
 #include "MainMenu.h"
+#include "MyRTC.h"
 #include <LiquidCrystal.h>
+#include <EEPROM.h>
+#include <Servo.h>
 
 struct FeedStruct
 {
-	int currentFeed; // стандартная настройка подкормки (отключено)
-	int feedHour;
-	int feedMinute;
+	byte currentFeed; // стандартная настройка подкормки (отключено)
+	byte feedHour;
+	byte feedMinute;
+	byte feedToday;
+	byte feedDay;
 	String currentFeedStr;
+	byte deg;
 };
 
 extern FeedStruct Feed;
 
-void setFeed(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrystal &lcd);
+void setFeed(int &menuLevel, int &menuItem, int &menuItemElement, LiquidCrystal &lcd, Servo &servo);
 void printSetFeed(LiquidCrystal &lcd, int &menuItemElement);
 void changeFeedStr();
-void initFeed();
+void initFeed(Servo &servo);
+void feeding(Servo &servo);
 
 #endif
 
