@@ -116,13 +116,14 @@ void initLight()
 
 void swithlight()
 {
-	if (Light.currentLight == 1 && analogRead(12) < 800 && Light.realLight == 0)
+	Serial.println(analogRead(12));
+	if (Light.currentLight == 1 && analogRead(12) < 450 && Light.realLight == 0)
 	{
 		digitalWrite(34, LOW);
 		Light.realLight = 1;
 	}
 
-	if (Light.currentLight == 1 && analogRead(12) > 800 && Light.realLight == 1)
+	if (Light.currentLight == 1 && analogRead(12) > 400 && Light.realLight == 1)
 	{
 		digitalWrite(34, HIGH);
 		Light.realLight = 0;
